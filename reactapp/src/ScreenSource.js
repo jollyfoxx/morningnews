@@ -10,7 +10,6 @@ function ScreenSource(props) {
   const [sourceList, setSourceList] = useState([])
   const [selectedLang, setSelectedLang] = useState(props.selectedLang)
 
-
   useEffect(() => {
     const APIResultsLoading = async() => {
       var langue = 'fr'
@@ -20,8 +19,9 @@ function ScreenSource(props) {
         var langue = 'en'
         var country = 'us'
       }
+
       props.changeLang(selectedLang)
-      const data = await fetch(`https://newsapi.org/v2/sources?language=${langue}&country=${country}&apiKey=b32c8b844d1243b1a7998d8228910f50`)
+      const data = await fetch(`https://newsapi.org/v2/sources?language=${langue}&country=${country}&apiKey=c590a89ec4bf4667bd3c1c640b2f6f46`)
       const body = await data.json()
       setSourceList(body.sources)
     }
@@ -29,13 +29,26 @@ function ScreenSource(props) {
     APIResultsLoading()
   }, [selectedLang])
 
+  
+  var handleClickSelectedLang = async (selectedLang) => {
+
+    props.changeLang(selectedLang)
+    setSelectedLang(selectedLang)
+
+    const response = await fetch('/language', {
+      method: 'PUT',
+      headers: {'Content-Type':'application/x-www-form-urlencoded'},
+      body: `token=${props.token}&language=${selectedLang}`
+    })
+  }
+
   return (
     <div>
         <Nav/>
        
        <div style={{display:'flex', justifyContent:'center', alignItems:'center'}} className="Banner">
-          <img style={{width:'40px', margin:'10px',cursor:'pointer'}} src='/images/fr.png' onClick={() => setSelectedLang('fr')} />
-          <img style={{width:'40px', margin:'10px',cursor:'pointer'}} src='/images/uk.png' onClick={() => setSelectedLang('en')} /> 
+          <img style={{width:'40px', margin:'10px',cursor:'pointer'}} src='/images/fr.png' onClick={() => handleClickSelectedLang("fr")} />
+          <img style={{width:'40px', margin:'10px',cursor:'pointer'}} src='/images/uk.png' onClick={() => handleClickSelectedLang("en")} /> 
         </div>
 
        <div className="HomeThemes">
@@ -62,8 +75,11 @@ function ScreenSource(props) {
 }
 
 function mapStateToProps(state){
-  return {selectedLang: state.selectedLang}
+  console.log(state)
+  return {selectedLang: state.selectedLang, token: state.token}
 }
+
+
 
 function mapDispatchToProps(dispatch){
   return {

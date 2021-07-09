@@ -5,7 +5,7 @@ var uid2 = require('uid2')
 var bcrypt = require('bcrypt');
 
 var userModel = require('../models/users')
-
+var articleModel = require('../models/articles')
 
 router.post('/sign-up', async function(req,res,next){
 
@@ -29,7 +29,6 @@ router.post('/sign-up', async function(req,res,next){
     error.push('champs vides')
   }
 
-
   if(error.length == 0){
 
     var hash = bcrypt.hashSync(req.body.passwordFromFront, 10);
@@ -49,7 +48,6 @@ router.post('/sign-up', async function(req,res,next){
     }
   }
   
-
   res.json({result, saveUser, error, token})
 })
 
@@ -86,10 +84,38 @@ router.post('/sign-in', async function(req,res,next){
     }
   }
   
-
   res.json({result, user, error, token})
 
-
 })
+
+router.post('/wishlist-article', async function(req, res, next) {
+
+  var newArticle = new articleModel({
+    title: req.body.title,
+    description: req.body.description, 
+    img: req.body.urlToImage,
+  })
+
+  var articleSave = await newArticle.save()
+
+  var result = false
+  if(articleSave){
+    result = true
+  }
+
+  res.json({result, articleSave})
+});
+
+router.put('/language', async function(req, res, next) {
+
+  console.log(req.body.token);
+
+  var newLanguage = await userModel.updateOne(
+    {token: req.body.token},
+    {language: req.body.language},
+  );
+  
+  res.json({newLanguage})
+});
 
 module.exports = router;
