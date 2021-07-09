@@ -28,6 +28,8 @@ function ScreenArticlesBySource(props) {
     findArticles()    
   },[])
 
+  
+
   var showModal = (title, content) => {
     setVisible(true)
     setTitle(title)
@@ -45,15 +47,12 @@ function ScreenArticlesBySource(props) {
   }
 
   var handleClickAddArticle = async (article) => {
-    
-    // console.log(article);
 
     props.addToWishList(article)
-
     const response = await fetch('/wishlist-article', {
       method: 'POST',
       headers: {'Content-Type':'application/x-www-form-urlencoded'},
-      body: `title=${article.title}&description=${article.description}&img=${article.urlToImage}`
+      body: `title=${article.title}&urlToImage=${article.urlToImage}&description=${article.description}`
     })
   }
 

@@ -7,6 +7,36 @@ var bcrypt = require('bcrypt');
 var userModel = require('../models/users')
 var articleModel = require('../models/articles')
 
+router.post('/wishlist-article', async function(req, res, next) {
+
+  var newArticle = new articleModel({
+    title: req.body.title,
+    description: req.body.description,
+    img: req.body.urlToImage
+  })
+
+  var articleSave = await newArticle.save()
+  var result = false
+   if(articleSave){
+  result = true
+  }
+
+  res.json({result, articleSave})
+
+});
+
+router.delete('/wishlist-article/:name', async function(req, res, next) {
+
+  var returnDb = await articleModel.deleteOne({ articleTitle: req.params.title})
+
+  var result = false
+  if(returnDb.deletedCount == 1){
+    result = true
+  }
+
+  res.json({result})
+});
+
 router.post('/sign-up', async function(req,res,next){
 
   var error = []
